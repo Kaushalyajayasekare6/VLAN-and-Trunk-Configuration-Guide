@@ -1,0 +1,175 @@
+Switch>
+Switch>
+Switch>en
+Switch#
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname sw1
+sw1(config)#vlan 10
+sw1(config-vlan)#name AA
+sw1(config-vlan)#ex
+sw1(config)#vlan 20
+sw1(config-vlan)#name BB
+sw1(config-vlan)#ex
+sw1(config)#interface range fa0/1-2
+sw1(config-if-range)#switchport mode access
+sw1(config-if-range)#switchport access vlan 10
+sw1(config-if-range)#ex
+sw1(config)#interface range fa0/3-4
+sw1(config-if-range)#switchport mode access
+sw1(config-if-range)#switchport access vlan 20
+sw1(config-if-range)#ex
+sw1(config)#vlan 99
+sw1(config-vlan)#name native
+sw1(config-vlan)#ex
+sw1(config)#
+sw1(config)#%SPANTREE-2-RECV_PVID_ERR: Received 802.1Q BPDU on non trunk FastEthernet0/5 VLAN1.
+
+%SPANTREE-2-BLOCK_PVID_LOCAL: Blocking FastEthernet0/5 on VLAN0001. Inconsistent port type.
+
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/5, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/5, changed state to up
+%SPANTREE-2-RECV_PVID_ERR: Received BPDU with inconsistent peer vlan id 99 on FastEthernet0/5 VLAN1.
+
+%SPANTREE-2-BLOCK_PVID_LOCAL: Blocking FastEthernet0/5 on VLAN0001. Inconsistent local vlan.
+
+
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/5 (1), with sw2 FastEthernet0/3 (99).
+
+sw1(config)#
+sw1(config)#
+sw1(config)#interface fa0/5
+sw1(config-if)#switchport mode trunk
+sw1(config-if)#switchport trunk native vlan 99
+sw1(config-if)#%SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking FastEthernet0/5 on VLAN0099. Port consistency restored.
+
+%SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking FastEthernet0/5 on VLAN0001. Port consistency restored.
+
+
+sw1(config-if)#switchport trunk allowed vlan 10,20
+sw1(config-if)#
+sw1(config-if)#
+sw1(config-if)#ex
+sw1(config)#
+sw1(config)#
+sw1(config)#
+sw1(config)#ex
+sw1#
+%SYS-5-CONFIG_I: Configured from console by console
+
+sw1#
+sw1#show interface trunk
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/5       on           802.1q         trunking      99
+
+Port        Vlans allowed on trunk
+Fa0/5       10,20
+
+Port        Vlans allowed and active in management domain
+Fa0/5       10,20
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/5       20
+
+sw1#
+sw1#wr
+Building configuration...
+
+
+
+
+
+
+
+
+Switch>
+Switch>
+Switch>en
+Switch#
+Switch#conf t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#
+Switch(config)#hostname sw2
+sw2(config)#
+sw2(config)#vlan 10
+sw2(config-vlan)#name AA
+sw2(config-vlan)#ex
+sw2(config)#vlan 20
+sw2(config-vlan)#name BB
+sw2(config-vlan)#ex
+sw2(config)#vlan 99
+sw2(config-vlan)#name native
+sw2(config-vlan)#ex
+sw2(config)#
+sw2(config)#interface fa0/1
+sw2(config-if)#switchport mode access
+sw2(config-if)#switchport access vlan 10
+sw2(config-if)#ex
+sw2(config)#
+sw2(config)#interface fa0/2
+sw2(config-if)#switchport mode access
+sw2(config-if)#switchport access vlan 20
+sw2(config-if)#ex
+sw2(config)#
+sw2(config)#interface fa0/3
+sw2(config-if)#switchport mode trunk
+
+sw2(config-if)#
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3, changed state to down
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/3, changed state to up
+
+sw2(config-if)#switchport trunk native vlan 99
+sw2(config-if)#switchport trunk allowed vlan 10,20
+sw2(config-if)#ex
+sw2(config)#
+sw2(config)#
+sw2(config)#
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/3 (99), with sw1 FastEthernet0/5 (1).
+ex
+sw2#
+%SYS-5-CONFIG_I: Configured from console by console
+
+sw2#
+sw2#show vlan br
+
+VLAN Name                             Status    Ports
+---- -------------------------------- --------- -------------------------------
+1    default                          active    Fa0/4, Fa0/5, Fa0/6, Fa0/7
+                                                Fa0/8, Fa0/9, Fa0/10, Fa0/11
+                                                Fa0/12, Fa0/13, Fa0/14, Fa0/15
+                                                Fa0/16, Fa0/17, Fa0/18, Fa0/19
+                                                Fa0/20, Fa0/21, Fa0/22, Fa0/23
+                                                Fa0/24, Gig0/1, Gig0/2
+10   AA                               active    Fa0/1
+20   BB                               active    Fa0/2
+99   native                           active    
+1002 fddi-default                     active    
+1003 token-ring-default               active    
+1004 fddinet-default                  active    
+1005 trnet-default                    active    
+sw2#
+sw2#
+sw2#show interface trunk
+Port        Mode         Encapsulation  Status        Native vlan
+Fa0/3       on           802.1q         trunking      99
+
+Port        Vlans allowed on trunk
+Fa0/3       10,20
+
+Port        Vlans allowed and active in management domain
+Fa0/3       10,20
+
+Port        Vlans in spanning tree forwarding state and not pruned
+Fa0/3       10,20
+
+sw2#
+sw2#
+%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on FastEthernet0/3 (99), with sw1 FastEthernet0/5 (1).
+
+sw2#
+sw2#wr
+Building configuration...
+[OK]
